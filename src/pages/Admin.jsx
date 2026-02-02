@@ -9,7 +9,7 @@ const Modal = ({ title, onClose, onSave, children, saveLabel = "Salvar", saveCol
     <div className="mission-card" style={{width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', padding: 25, background: 'white', borderRadius: 16}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
         <h3 style={{margin: 0, color: '#1E293B'}}>{title}</h3>
-        <button className="outline" style={{width: 'auto', padding: 5, border: 'none', color: '#64748B'}} onClick={onClose}><X size={24}/></button>
+        <button className="outline" style={{width: 'auto', padding: 5, border: 'none', color: '#64748B'}} onClick={onClose} aria-label="Fechar"><X size={24}/></button>
       </div>
       
       {children}
@@ -259,7 +259,7 @@ const confirmDeleteUser = async () => {
     <div className="container">
       <header style={{marginBottom: 30}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20}}>
-            <button className="outline" style={{padding: 10, width: 'auto', borderRadius: '50%'}} onClick={() => navigate('/app')}><ArrowLeft size={20}/></button>
+            <button className="outline" style={{padding: 10, width: 'auto', borderRadius: '50%'}} onClick={() => navigate('/app')} aria-label="Voltar ao app"><ArrowLeft size={20}/></button>
             <h2 style={{margin: 0, color: '#7C3AED'}}>Painel do Mestre</h2>
         </div>
 

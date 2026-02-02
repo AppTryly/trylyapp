@@ -165,12 +165,12 @@ export default function Profile({ session }) {
     <div className="container">
       <header style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 30}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
-          <button className="outline" style={{padding: 10, width: 'auto', borderRadius: '50%'}} onClick={() => navigate('/app')}>
+          <button className="outline" style={{padding: 10, width: 'auto', borderRadius: '50%'}} onClick={() => navigate('/app')} aria-label="Voltar ao início">
             <ArrowLeft size={20}/>
           </button>
           <h2 style={{margin: 0}}>Meu Perfil</h2>
         </div>
-        <button className="outline" style={{padding: 10, width: 'auto', borderRadius: 12}} onClick={toggleDarkMode} title={darkMode ? 'Modo claro' : 'Modo escuro'}>
+        <button className="outline" style={{padding: 10, width: 'auto', borderRadius: 12}} onClick={toggleDarkMode} title={darkMode ? 'Modo claro' : 'Modo escuro'} aria-label={darkMode ? 'Ativar modo claro' : 'Ativar modo escuro'}>
           {darkMode ? <Sun size={20} color="var(--primary)" /> : <Moon size={20} color="var(--text-muted)" />}
         </button>
       </header>
@@ -203,7 +203,7 @@ export default function Profile({ session }) {
         <small style={{display: 'block', color: '#64748B', marginBottom: 5, fontWeight: 'bold'}}>SEU ID DE AMIGO</small>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10}}>
             <code style={{fontSize: '0.8rem', wordBreak: 'break-all', background: '#fff', padding: 5, borderRadius: 4, flex: 1, color: '#334155'}}>{currentUser.id}</code>
-            <button onClick={copyUserId} style={{width: 'auto', padding: 8, fontSize: '0.8rem', background: copied ? '#22c55e' : '#334155', color: '#fff', border: 'none', borderRadius: 6}}>
+            <button onClick={copyUserId} style={{width: 'auto', padding: 8, fontSize: '0.8rem', background: copied ? '#22c55e' : '#334155', color: '#fff', border: 'none', borderRadius: 6}} aria-label={copied ? 'ID copiado' : 'Copiar ID'}>
                 {copied ? <Check size={16}/> : <Copy size={16}/>}
             </button>
         </div>
@@ -215,7 +215,7 @@ export default function Profile({ session }) {
         <p style={{fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 10}}>Envie este link para alguém adicionar você como amigo.</p>
         <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
             <code style={{fontSize: '0.75rem', wordBreak: 'break-all', background: 'var(--surface)', padding: 8, borderRadius: 4, flex: 1, color: 'var(--text-main)'}}>{typeof window !== 'undefined' ? `${window.location.origin}/invite/${currentUser.id}` : ''}</code>
-            <button onClick={copyInviteLink} style={{width: 'auto', padding: 8, fontSize: '0.8rem', background: linkCopied ? '#22c55e' : 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6}}>
+            <button onClick={copyInviteLink} style={{width: 'auto', padding: 8, fontSize: '0.8rem', background: linkCopied ? '#22c55e' : 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6}} aria-label={linkCopied ? 'Link copiado' : 'Copiar link de convite'}>
                 {linkCopied ? <Check size={16}/> : <Link2 size={16}/>}
             </button>
         </div>

@@ -129,7 +129,7 @@ export default function Login() {
           </h1>
           
           <p style={{fontSize: '1.1rem', color: '#f3f4f6', lineHeight: '1.5', marginBottom: 35, maxWidth: '90%'}}>
-             aqui você aprende a se controlar, evoluir com tentativa e construir algo que fique.
+             Aqui você aprende a se controlar, evoluir com tentativa e construir algo que fique.
           </p>
 
           {/* BARRA LATERAL */}

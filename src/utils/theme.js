@@ -16,9 +16,12 @@ export function setStoredTheme(theme) {
 
 export function applyTheme(theme) {
   const root = document.documentElement;
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
   if (theme === 'dark') {
     root.setAttribute('data-theme', 'dark');
+    if (metaTheme) metaTheme.setAttribute('content', '#1e293b');
   } else {
     root.removeAttribute('data-theme');
+    if (metaTheme) metaTheme.setAttribute('content', '#7C3AED');
   }
 }
