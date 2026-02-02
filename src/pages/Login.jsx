@@ -113,9 +113,9 @@ export default function Login() {
           position: 'relative'
       }}>
           
-          {/* HEADER LOGO - palavra Tryly */}
-          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30}}>
-              <img src="/logotrylyroxo.png" alt="Tryly" style={{height: 36, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)'}} />
+          {/* HEADER LOGO - palavra Tryly em branco */}
+          <div style={{display: 'flex', alignItems: 'center', marginBottom: 30}}>
+              <span style={{color: '#fff', fontWeight: '800', fontSize: '1.5rem', letterSpacing: '-0.5px'}}>Tryly</span>
           </div>
 
           <h1 style={{

@@ -5,7 +5,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
-import Privacy from './pages/Privacy'; 
+import Privacy from './pages/Privacy';
+import Invite from './pages/Invite'; 
 
 function App() {
   const [session, setSession] = useState(null);
@@ -33,6 +34,7 @@ function App() {
         
         {/* Nova Rota Pública */}
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/invite/:id" element={<Invite />} />
 
         {/* Rotas Protegidas */}
         <Route path="/app" element={session ? <Dashboard session={session} /> : <Navigate to="/" />} />
