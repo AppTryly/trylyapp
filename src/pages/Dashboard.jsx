@@ -39,6 +39,7 @@ export default function Dashboard({ session }) {
   const [view, setView] = useState('dashboard');
   const [reflectionText, setReflectionText] = useState('');
   const [aiResponse, setAiResponse] = useState('');
+  const [trailJustCompleted, setTrailJustCompleted] = useState(false);
 
   const firstName = session.user.user_metadata.full_name?.split(' ')[0] || 'Viajante';
 
@@ -135,12 +136,18 @@ export default function Dashboard({ session }) {
       const nextTrail = trails[currentIndex + 1];
 
       if (nextTrail) {
-          if (nextTrail.is_paid && !isPro) { setShowProPopup(true); return; }
+          if (nextTrail.is_paid && !isPro) { setShowProPopup(true); return false; }
           await supabase.from('user_progress').update({ trail_id: nextTrail.id, current_day: 1, status: 'new', last_completed_at: null }).eq('user_id', session.user.id);
-          alert(`Parabéns! Você iniciou a trilha: ${nextTrail.title}`);
+          setTrailJustCompleted(false);
           fetchData();
+          setView('dashboard');
+          return true;
       } else {
           alert("Você zerou o jogo! Aguarde novas trilhas serem lançadas.");
+          setTrailJustCompleted(false);
+          setView('dashboard');
+          fetchData();
+          return true;
       }
   };
 
@@ -211,7 +218,7 @@ export default function Dashboard({ session }) {
     const { data: nextMission } = await supabase.from('missions').select('id').eq('trail_id', activeTrail.id).eq('day_number', progress.current_day + 1).maybeSingle();
     setLoading(false);
     
-    if (!nextMission) { setView('trail_finished'); } else { setView('feedback'); }
+    if (!nextMission) { setTrailJustCompleted(true); setView('feedback'); } else { setView('feedback'); }
   };
 
   const checkReminder = (prog) => {
@@ -245,7 +252,33 @@ export default function Dashboard({ session }) {
   }
 
   if (view === 'reflection') return ( <div className="container"><h2>Check-in Diário</h2><p className="mb-4">Como foi realizar: <strong>"{currentMission?.action_text}"</strong>?</p><textarea rows="6" placeholder="Escreva aqui..." value={reflectionText} onChange={e => setReflectionText(e.target.value)} /><button onClick={submitReflection} disabled={loading}>{loading ? 'Analisando...' : 'Enviar Relato'}</button><button className="outline mt-4" onClick={() => setView('dashboard')}>Cancelar</button></div> );
-  if (view === 'feedback') return ( <div className="container center" style={{justifyContent:'center'}}><div style={{fontSize: '4rem', marginBottom: 10}}>✨</div><h2 style={{color: '#7C3AED'}}>Missão Cumprida!</h2><div className="mission-card" style={{border: 'none', background: '#F3E8FF', boxShadow: 'none'}}><small style={{fontWeight: 'bold'}}>FEEDBACK DO SISTEMA</small><p style={{color: '#4B5563', fontStyle: 'italic', marginTop: 15}}>"{aiResponse}"</p><div className="status-badge" style={{marginTop: 20, background: '#fff'}}>+ {currentMission?.attribute} XP</div></div><button onClick={backToHome} style={{marginTop: 30}}>Voltar ao Menu</button></div> );
+  
+  if (view === 'feedback') {
+    const nextTrailForPurchase = allTrails[allTrails.findIndex(t => t.id === activeTrail?.id) + 1];
+    const needsPurchase = nextTrailForPurchase?.is_paid && !isPro;
+    return (
+      <div className="container center" style={{justifyContent:'center'}}>
+        <div style={{fontSize: '4rem', marginBottom: 10}}>✨</div>
+        <h2 style={{color: '#7C3AED'}}>Missão Cumprida!</h2>
+        <div className="mission-card" style={{border: 'none', background: '#F3E8FF', boxShadow: 'none'}}>
+          <small style={{fontWeight: 'bold'}}>FEEDBACK DO SISTEMA</small>
+          <p style={{color: '#4B5563', fontStyle: 'italic', marginTop: 15}}>"{aiResponse}"</p>
+          <div className="status-badge" style={{marginTop: 20, background: '#fff'}}>+ {currentMission?.attribute} XP</div>
+        </div>
+        {trailJustCompleted && (
+          <>
+            <div style={{marginTop: 20, padding: 16, borderRadius: 12, background: '#FEF3C7', border: '1px solid #F59E0B'}}>
+              <p style={{margin: 0, fontWeight: '600', color: '#92400E'}}>🏆 Você zerou a trilha {activeTrail?.title}! Hora de subir de nível.</p>
+            </div>
+            <button onClick={advanceToNextTrail} style={{marginTop: 20}}>
+              {needsPurchase ? `Desbloquear ${nextTrailForPurchase?.title} (PRO)` : 'Iniciar Próxima Trilha'}
+            </button>
+          </>
+        )}
+        {!trailJustCompleted && <button onClick={backToHome} style={{marginTop: 30}}>Voltar ao Menu</button>}
+      </div>
+    );
+  }
   if (view === 'mission') return ( <div className="container"><div className="status-badge">Dia {currentMission?.day_number}</div><h1>{currentMission?.title}</h1><p style={{fontSize: '1.1rem', marginTop: 20}}>{currentMission?.description}</p><div className="mission-card"><h3 style={{color: '#7C3AED'}}>Sua Ação</h3><p style={{fontWeight: '600', fontSize: '1.2rem'}}>{currentMission?.action_text}</p></div><div style={{marginTop: 'auto'}}><button onClick={startMission}>Aceitar Desafio</button><button className="outline mt-4" onClick={() => setView('dashboard')}>Voltar</button></div></div> );
 
   const locked = isMissionLocked();
@@ -401,7 +434,7 @@ export default function Dashboard({ session }) {
           </div>
       )}
 
-      {showInstallPopup && (<div className="popup-overlay" style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 200, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}><div style={{background: '#7C3AED', color: '#fff', width: '100%', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 25, animation: 'slideUp 0.4s ease-out'}}><div style={{display: 'flex', gap: 15, alignItems: 'center', marginBottom: 20}}><div style={{width: 50, height: 50, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center'}}><span style={{color: '#7C3AED', fontSize: '1.8rem', fontWeight: 'bold'}}>T</span></div><div><h3 style={{margin: 0, fontSize: '1.2rem', color: '#fff'}}>Instale o App</h3><p style={{margin: 0, fontSize: '0.9rem', color: '#e9d5ff'}}>Foco total, sem distrações do navegador.</p></div></div>{isIOS ? (<div style={{background: 'rgba(0,0,0,0.25)', padding: 15, borderRadius: 10, fontSize: '0.9rem', marginBottom: 15, border: '1px solid rgba(255,255,255,0.1)'}}><p style={{margin: 0, display: 'flex', alignItems: 'center', gap: 5, color: '#fff', fontWeight: '500'}}>1. Toque em Compartilhar <Share size={16} color="#fff"/></p><p style={{margin: '5px 0 0 0', color: '#fff', fontWeight: '500'}}>2. Selecione "Adicionar à Tela de Início"</p></div>) : (<button onClick={handleInstallClick} style={{background: '#fff', color: '#7C3AED', width: '100%', fontWeight: 'bold', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8}}><Download size={18}/> Adicionar à Tela de Início</button>)}<button onClick={handleCloseInstall} style={{background: 'transparent', color: '#fff', width: '100%', border: 'none', fontSize: '0.9rem', opacity: 0.8}}>Agora não</button></div></div>)}
+      {showInstallPopup && (<div className="popup-overlay" style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 200, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center'}}><div style={{background: '#7C3AED', color: '#fff', width: '100%', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 25, animation: 'slideUp 0.4s ease-out'}}><div style={{display: 'flex', gap: 15, alignItems: 'center', marginBottom: 20}}><div style={{width: 50, height: 50, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}><img src="/icone-favicon.png" alt="Tryly" style={{width: 36, height: 36, objectFit: 'contain'}} /></div><div><h3 style={{margin: 0, fontSize: '1.2rem', color: '#fff'}}>Instale o App</h3><p style={{margin: 0, fontSize: '0.9rem', color: '#e9d5ff'}}>Foco total, sem distrações do navegador.</p></div></div>{isIOS ? (<div style={{background: 'rgba(0,0,0,0.25)', padding: 15, borderRadius: 10, fontSize: '0.9rem', marginBottom: 15, border: '1px solid rgba(255,255,255,0.1)'}}><p style={{margin: 0, display: 'flex', alignItems: 'center', gap: 5, color: '#fff', fontWeight: '500'}}>1. Toque em Compartilhar <Share size={16} color="#fff"/></p><p style={{margin: '5px 0 0 0', color: '#fff', fontWeight: '500'}}>2. Selecione "Adicionar à Tela de Início"</p></div>) : (<button onClick={handleInstallClick} style={{background: '#fff', color: '#7C3AED', width: '100%', fontWeight: 'bold', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8}}><Download size={18}/> Adicionar à Tela de Início</button>)}<button onClick={handleCloseInstall} style={{background: 'transparent', color: '#fff', width: '100%', border: 'none', fontSize: '0.9rem', opacity: 0.8}}>Agora não</button></div></div>)}
       {showReminder && !showInstallPopup && (<div style={{position: 'fixed', bottom: 20, left: 20, right: 20, zIndex: 100, background: '#1e293b', color: '#fff', borderRadius: 16, padding: 20, boxShadow: '0 10px 25px rgba(0,0,0,0.3)', animation: 'slideUp 0.5s ease-out'}}><div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}><div style={{display: 'flex', gap: 12}}><div style={{background: '#7C3AED', padding: 8, borderRadius: '50%', height: 36, width: 36, display: 'flex', alignItems: 'center', justifyContent: 'center'}}><Bell size={18} color="white" /></div><div><strong style={{fontSize: '1rem', display: 'block', marginBottom: 4}}>{reminderMessage.title}</strong><p style={{fontSize: '0.85rem', color: '#cbd5e1', margin: 0, lineHeight: 1.4}}>{reminderMessage.text}</p></div></div><button onClick={() => setShowReminder(false)} style={{background: 'transparent', border: 'none', padding: 0, color: '#64748B', width: 'auto'}}><X size={20} /></button></div><button onClick={handlePopupAction} style={{width: '100%', marginTop: 15, background: '#fff', color: '#0f172a', fontWeight: 'bold', border: 'none', padding: '10px'}}>{reminderMessage.action}</button></div>)}
       <style>{`@keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
     </div>

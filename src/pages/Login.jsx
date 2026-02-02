@@ -23,7 +23,7 @@ export default function Login() {
   const [successMsg, setSuccessMsg] = useState(null); 
 
   useEffect(() => {
-    document.title = "Tryly | Treino comportamental para ação e decisão real.";
+    document.title = "Tryly | O Acelerador de Protagonismo";
   }, []);
 
   const handleAuth = async (e) => {
@@ -113,18 +113,9 @@ export default function Login() {
           position: 'relative'
       }}>
           
-          {/* HEADER LOGO BRANCO */}
+          {/* HEADER LOGO - palavra Tryly */}
           <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30}}>
-              <div style={{
-                  background: 'rgba(255,255,255,0.15)', 
-                  width: 40, height: 40, 
-                  borderRadius: 10, 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                  {/* FILTRO PARA DEIXAR BRANCO */}
-                  <img src="/logo.png" alt="Logo" style={{width: 24, height: 24, objectFit: 'contain', filter: 'brightness(0) invert(1)'}} />
-              </div>
-              <span style={{color: '#fff', fontWeight: 'bold', fontSize: '1.2rem'}}>Tryly</span>
+              <img src="/logotrylyroxo.png" alt="Tryly" style={{height: 36, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)'}} />
           </div>
 
           <h1 style={{
@@ -132,13 +123,13 @@ export default function Login() {
               lineHeight: '1.1', 
               fontWeight: '900', 
               marginBottom: 20, 
-              color: '#1a1a1a' 
+              color: '#fff' 
           }}>
-             O Tryly é um sistema de treino comportamental.
+             O tryly é um sistema de treino prático.
           </h1>
           
           <p style={{fontSize: '1.1rem', color: '#f3f4f6', lineHeight: '1.5', marginBottom: 35, maxWidth: '90%'}}>
-             Aqui você age, lê a realidade e <strong>toma decisões</strong> que sustentam no dia a dia.
+             aqui você aprende a se controlar, evoluir com tentativa e construir algo que fique.
           </p>
 
           {/* BARRA LATERAL */}
@@ -148,9 +139,7 @@ export default function Login() {
              borderLeft: '4px solid #fff',
              paddingLeft: 15
           }}>
-             {/* VOLTANDO PARA CINZA */}
-             <span style={{fontSize: '1.2rem', fontWeight: 'bold', color: '#9ca3af'}}>Não é motivação.</span>
-             <span style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#fff'}}>É prática.</span>
+             <span style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#fff'}}>Gestão. Growth. Equity.</span>
           </div>
       </div>
 
@@ -166,11 +155,11 @@ export default function Login() {
           
           {/* LOGO ACIMA DO TÍTULO */}
           <div style={{display: 'flex', justifyContent: 'center', marginBottom: 20}}>
-              <img src="/logo.png" alt="Logo" style={{width: 100, height: 100, objectFit: 'contain'}} />
+              <img src="/logotrylyroxo.png" alt="Tryly" style={{height: 80, width: 'auto', objectFit: 'contain'}} />
           </div>
 
           <h2 style={{fontSize: '1.5rem', color: '#1e293b', marginBottom: 5, fontWeight: '800'}}>
-              {isRecovery ? 'Recuperar Acesso' : 'Acesse a plataforma'}
+              {isRecovery ? 'Recuperar Acesso' : 'Começar o treino'}
           </h2>
           <p style={{color: '#64748B', fontSize: '0.95rem', marginBottom: 30}}>
               {isRecovery ? 'Enviaremos um código.' : 'Continue sua evolução.'}
