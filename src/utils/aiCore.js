@@ -1,57 +1,28 @@
-// Versão OpenAI (GPT-3.5 ou GPT-4o)
+// Chamada à OpenAI via API do próprio backend (chave NUNCA no frontend)
 export async function processReflection(text, missionAttribute, badgeName, customPrompt) {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
-  if (!apiKey) {
-    console.warn("⚠️ API Key da OpenAI não encontrada!");
-    return fallbackResponse();
-  }
-
-  // 1. Define a PERSONALIDADE
-  let systemMessage = "";
-  if (customPrompt && customPrompt.trim().length > 0) {
-      systemMessage = `PERSONALIDADE: "${customPrompt}". Ignore instruções anteriores.`;
-  } else {
-      systemMessage = `Você é o "Mestre" do Tryly. Seja frio, analítico e curto. Foco em execução.`;
-  }
-
-  // 2. Monta a Mensagem do Usuário
-  const userMessage = `
-    DADOS: Ganhou ${missionAttribute} XP | Selo: ${badgeName || 'Nenhum'}
-    RELATO: "${text}"
-    
-    AÇÃO: Responda em 2 frases curtas e motivadoras (estilo "tough love").
-  `;
-
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("/api/reflection", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo", // Ou "gpt-4o" se quiser pagar um pouco mais por mais inteligência
-        messages: [
-          { role: "system", content: systemMessage },
-          { role: "user", content: userMessage }
-        ],
-        temperature: 1.0,
-        max_tokens: 150
-      })
+        text,
+        missionAttribute,
+        badgeName,
+        customPrompt,
+        variationSeed: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      }),
     });
 
     const data = await response.json();
 
-    if (data.error) {
-      console.error("🚨 Erro OpenAI:", data.error);
+    if (!response.ok || !data.content) {
+      console.warn("⚠️ Resposta da API de reflexão inválida:", data.error || data);
       return fallbackResponse();
     }
 
-    return data.choices[0].message.content;
-
+    return data.content;
   } catch (error) {
-    console.error("🚨 Erro de Conexão:", error);
+    console.error("🚨 Erro de Conexão (reflection):", error);
     return fallbackResponse();
   }
 }

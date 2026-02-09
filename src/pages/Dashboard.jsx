@@ -323,7 +323,7 @@ export default function Dashboard({ session }) {
     const needsPurchase = nextTrailForPurchase?.is_paid && !isPro;
     return (
       <div className="container center" style={{justifyContent:'center'}}>
-        <div style={{fontSize: '4rem', marginBottom: 10}}>✨</div>
+        <img src="/logotrylyroxo.png" alt="Tryly" style={{height: '4rem', width: 'auto', marginBottom: 10, objectFit: 'contain'}} />
         <h2 style={{color: 'var(--primary)'}}>Missão Cumprida!</h2>
         <div className="mission-card" style={{border: 'none', background: 'var(--primary-light)', boxShadow: 'none'}}>
           <small style={{fontWeight: 'bold'}}>FEEDBACK DO SISTEMA</small>
